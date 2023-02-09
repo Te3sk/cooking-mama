@@ -1,0 +1,9 @@
+{
+    "light": {
+        "colors": {
+            "bgheadnfoot": "#e9aa73",
+            "bgcentral": "#ffebe7"
+        },
+        "macroHeader": "bg-[#e9aa73] w-full flex flex-row justify-between"
+    }
+}
