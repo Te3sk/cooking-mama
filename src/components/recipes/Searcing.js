@@ -2,12 +2,11 @@
 // # SEARCING RECIPES PAGE
 // # ------------------------------------------------
 
-/* TODO
-  - finish include ingredients
-  - view result 
-  - fix macro-cancel button that don't show after cancel a sub-filter-tab
-  - fix the subtab that close themself before the submit
-*/
+
+//  TODO- finish include ingredients
+//  TODO- view result 
+//  TODO- fix macro-cancel button that don't show after cancel a sub-filter-tab
+//  TODO- fix the subtab that close themself before the submit
 
 import React, { useState, useEffect } from "react";
 
@@ -213,9 +212,7 @@ function Searcing() {
   const FilterTab = () => {
     // * current sub-filter-tab
     const [currentChoice, setCurrentChoice] = useState(null);
-    /* todo
-      - include ingredients
-    */
+   // TODO- include ingredients
 
     // # set witch sub-filter-tab show (null if none)
     const CurrentViewer = () => {
@@ -526,9 +523,9 @@ function Searcing() {
     };
 
     return (
-      <div>
+      <div >
         {/* filter buttons */}
-        <div>
+        <div className="flex flex-row justify-center">
           {/* choice cousine */}
           <button
             className="border-2"
@@ -630,7 +627,7 @@ function Searcing() {
   };
 
   return (
-    <div>
+    <div className="h-screen mt-16 flex flex-col items-center">
       <h1>Searcing Recipes</h1>
       <form onSubmit={Submit}>
         <input
@@ -646,13 +643,13 @@ function Searcing() {
       <button
         className="border-2"
         onClick={(e) => {
-          setFilterForm(true);
+          setFilterForm(!filterForm);
         }}
       >
         Filter
       </button>
       {filterForm ? (
-        <div>
+        <div className="flex flex-col items-center">
           <FilterTab />
           {subFilter ? (
             <button

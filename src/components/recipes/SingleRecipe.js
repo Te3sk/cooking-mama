@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
-/* 
-TODO
-    - check if it's correct (to many api calls in a day)
-    - render result
-*/
+//  TODO- check if it's correct (to many api calls in a day)
+//  TODO- render result
+
 
 // const query = "https://api.spoonacular.com/recipes/{id}/information";
 const qprefix = "https://api.spoonacular.com/recipes/";
