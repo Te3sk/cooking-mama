@@ -7,8 +7,9 @@
 //  TODO- view result 
 //  TODO- fix macro-cancel button that don't show after cancel a sub-filter-tab
 //  TODO- fix the subtab that close themself before the submit
+//  TODO- write functions in an other file
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 // * general prefix of the api get request
 const prefix =

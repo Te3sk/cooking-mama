@@ -24,7 +24,8 @@ import RandomRecipes from "./components/recipes/RandomRecipes";
 //* file with sidebar menù
 import SideBar from "./components/SideBar";
 // * file with spoonacular api features
-import Searcing from "./components/recipes/Searcing.js";
+// import Searcing from "./components/recipes/Searcing.js";
+import Searching from "./components/recipes/Searching";
 // * in this json file there are all style information (colors, font, ...)
 import styles from './components/styles.json'
 // * footer and header file
@@ -121,7 +122,7 @@ function App() {
         <Route path='/' element={<HomePage />}/>
         <Route path='/log-in' element={<SignIn />}/>
         <Route path='/sign-in' element={<SignUp />}/>
-        <Route path='/complex-search' element={<Searcing />}/>
+        <Route path='/complex-search' element={<Searching />}/>
         <Route path='/random' element={<RandomRecipes />}/>
         <Route path='/userspace' element={<AuthDetails />}/>
       </Routes>
