@@ -9,6 +9,7 @@
 //  TODO- separate Searching.js in files
 //  TODO- database.......
 //  TODO- ALL front-end
+//	TODO- side tab menu whit right component
 
 
 import "./App.css";
