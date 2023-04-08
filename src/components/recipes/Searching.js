@@ -124,14 +124,30 @@ const scpar = {
 };
 
 function Searching() {
+  //	TODO- submit again when set filters
   // * true if request to api is loading, false otherwise
   const [load, setLoad] = useState(true);
   // * searching query
   const [query, setQuery] = useState(null);
   // * result of searching query
   const [searchResult, setSearchResult] = useState(null);
-  // * true if the user select at least one filter, false otherwise
-  // const [filtered, setFiltered] = useState(false);
+  // * true if the user select at least one filter, false otherwise  
+  // * (array) cousines selected by the user to be inclused, null if user doesn't select
+  const [inCous, setInCous] = useState(null);
+  // * (array) cousines selected by the user to be excluded, null if user doesn't select
+  const [exCous, setExCous] = useState(null);
+  // * (array) diets selected by the user
+  const [inDiets, setInDiets] = useState(null);
+  // * (array) intollerances selected by the user
+  const [inIntollerance, setInIntollerance] = useState(null);
+  // * (array) ingredients select by the user to be included
+  const [inIngredients, setInIngredients] = useState(null);
+  // * (array) ingredients select by the user to be included
+  const [exIngredients, setExIngredients] = useState(null);
+  // * current sorting option choose by the user
+  const [curSort, setCurSort] = useState(null);
+  // * sorting direction
+  const [sortDir, setSortDir] = useState("asc");
 
   // # tab with all filter options
   const FilterTab = () => {
@@ -139,36 +155,28 @@ function Searching() {
     // # COUSINES usestates
     // * if true, show all the cousines selectable
     const [showCousines, setShowCousines] = useState(false);
-    // * (array) cousines selected by the user to be inclused, null if user doesn't select
-    const [inCous, setInCous] = useState(null);
-    // * (array) cousines selected by the user to be excluded, null if user doesn't select
-    const [exCous, setExCous] = useState(null);
     // # DIET usestates
     // * if true, show all the diets selectable
     const [showDiet, setShowDiet] = useState(false);
-    // * (array) diets selected by the user
-    const [inDiets, setInDiets] = useState(null);
     // # INTOLLERANCE usestates
     // * if true, show all the intollerance selectable
     const [showIntollerance, setShowIntollerance] = useState(false);
-    // * (array) intollerances selected by the user
-    const [inIntollerance, setInIntollerance] = useState(null);
     // # INGREDIENTS usestates
     // * if true, show all the ingredients selectable
     const [showIngredients, setShowIngredients] = useState(false);
-    // * (array) ingredients select by the user to be included
-    const [inIngredients, setInIngredients] = useState(null);
-    // * (array) ingredients select by the user to be included
-    const [exIngredients, setExIngredients] = useState(null);
     // * (string) single ingredients write by the user (last)
     const [singIng, setSingIng] = useState(null);
     // * (array) list of all the ingredients wrote by the user
     const [ingList, setIngList] = useState(null);
+    // # SORT OPTION usestates
+    // * if true, show all sorting option selectable
+    const [showSort, setShowSort] = useState(false);
 
     // # includes and excludes cousines from the query
     const opCousine = () => {
       //	TODO- graphical view
       //	TODO- mutual exclusion between include and exclude (if click "exclude" of an include element, remove it from included list)
+      //	TODO- fix that when click a button close the subtab
 
       const handleIn = (e, x) => {
         //	TODO- clean code
@@ -316,8 +324,6 @@ function Searching() {
     // # includes and excludes ingredients from the query
     const OpIngredients = () => {
       //	TODO- graphical view
-      //	TODO- mutual exclusion
-      //	TODO- cancell button for ingredients
 
       // * input submit: add the element wrote by the user in the list of element (ingList)
       const insub = (e) => {
@@ -333,17 +339,18 @@ function Searching() {
       // * handle the include selection by the user of an element in the list, add it to inIngredients
       const handleIn = (e, x) => {
         e.preventDefault();
+        // insert the ingredient in the list or initalize it with the element
         if (inIngredients && inIngredients.indexOf(x) < 0) {
           setInIngredients([...inIngredients, x]);
         } else {
           setInIngredients([x]);
         }
 
-        // if (exIngredients && exIngredients.indexOf(x) >= 0) {
-        //   setExIngredients(
-        //     exIngredients.splice(exIngredients.indexOf(x), 1)
-        //   );
-        // }
+        // if the element is in the excluded list, remove from it
+        if (exIngredients && exIngredients.indexOf(x) >= 0) {
+          setExIngredients((current) => current.filter((ing) => ing !== x));
+          console.log(exIngredients);
+        }
 
         // ! temp
         console.log("included:");
@@ -355,17 +362,18 @@ function Searching() {
       // * handle the exclude selection by the user of an element in the list, add it to exIngredients
       const handleEx = (e, x) => {
         e.preventDefault();
+        // insert the ingredient in the list or initalize it with the element
         if (exIngredients && exIngredients.indexOf(x) < 0) {
           setExIngredients([...exIngredients, x]);
         } else {
           setExIngredients([x]);
         }
 
-        // if (inIngredients && inIngredients.indexOf(singIng) >= 0) {
-        //   setInIngredients(
-        //     inIngredients.splice(inIngredients.indexOf(x), 1)
-        //   );
-        // }
+        // if the element is in the included list, remove from it
+        if (inIngredients && inIngredients.indexOf(x) >= 0) {
+          setInIngredients((current) => current.filter((ing) => ing !== x));
+          console.log(inIngredients);
+        }
 
         // ! temp
         console.log("included:");
@@ -377,12 +385,20 @@ function Searching() {
       // * remove the item from ingList
       const handleCancel = (e, x) => {
         e.preventDefault();
-        console.log(ingList.splice(ingList.indexOf(x), 1));
-        console.log(ingList);
-        setShowIngredients(false);
-        setTimeout(
-        setShowIngredients(true), 10);
-      }
+        setIngList((current) => current.filter((ing) => ing !== x));
+
+        if (inIngredients.indexOf(x) >= 0) {
+          setInIngredients((current) => current.filter((ing) => ing !== x));
+        } else if (exIngredients.indexOf(x) >= 0) {
+          setExIngredients((current) => current.filter((ing) => ing !== x));
+        }
+
+        // ! temp
+        console.log("included:");
+        console.log(inIngredients);
+        console.log("excluded:");
+        console.log(exIngredients);
+      };
 
       return (
         <div>
@@ -404,15 +420,26 @@ function Searching() {
                     <li key={index} className="flex flex-row justify-between">
                       <p>{x}</p>
                       {/* include */}
-                      <button className="border-2" onClick={e => handleIn(e,x)}>
+                      <button
+                        className="border-2"
+                        onClick={(e) => handleIn(e, x)}
+                      >
                         1
                       </button>
                       {/* exclude */}
-                      <button className="border-2" onClick={e => handleEx(e,x)}>
+                      <button
+                        className="border-2"
+                        onClick={(e) => handleEx(e, x)}
+                      >
                         2
                       </button>
                       {/* cancel */}
-                      <button className="border-2" onClick={e => handleCancel(e,x)}>3</button>
+                      <button
+                        className="border-2"
+                        onClick={(e) => handleCancel(e, x)}
+                      >
+                        3
+                      </button>
                     </li>
                   );
                 })}
@@ -424,6 +451,43 @@ function Searching() {
         </div>
       );
     };
+
+    // # user can choose the sorting option
+    const OpSorting = () => {
+      return (
+        <ul>
+          {scpar.listOfSortOptions.map((x, index) => {
+            return (
+              <li key={index}>
+                <p
+                  onClick={(e) => {
+                    setCurSort(x);
+                    setShowSort(false);
+                    console.log(curSort);
+                  }}
+                >
+                  {x}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      );
+    };
+
+    const deleteFilters = (e) => {
+      e.preventDefault();
+      setInCous(null);
+      setExCous(null);
+      setInDiets(null);
+      setInIntollerance(null);
+      setInIngredients(null);
+      setExIngredients(null);
+      setCurSort(null);
+      setSortDir("asc");
+      //! temp
+      console.log("filter deleted");
+    }
 
     return (
       <div className="flex flex-col">
@@ -536,8 +600,29 @@ function Searching() {
         ) : (
           <></>
         )}
-        <button className="border-2">Sort element by</button>
-        <button className="border-2">Sort direction</button>
+        {/* sorting element */}
+        <button className="border-2" onClick={(e) => setShowSort(!showSort)}>
+          {showSort
+            ? "close and cancell"
+            : "Sort element by " + (curSort ? curSort : "")}
+        </button>
+        {/* sorting option filter tab */}
+        {showSort ? <>{OpSorting()}</> : <></>}
+        <div className="border-2 flex flex-col place-self-center">
+          Sort direction
+          <button
+            className="border-2"
+            onClick={(e) => {
+              sortDir === "asc" ? setSortDir("desc") : setSortDir("asc");
+            }}
+          >
+            {sortDir}
+          </button>
+        </div>
+        <button
+        className="border-2"
+        onClick={deleteFilters}
+        >cancel filters</button>
       </div>
     );
   };
