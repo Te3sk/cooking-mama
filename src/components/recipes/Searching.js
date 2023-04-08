@@ -3,6 +3,7 @@
 // # ------------------------------------------------
 
 import { React, useState, useEffect } from "react";
+import styles from "../styles.json";
 // import filterop from "./filterop";
 
 // # Spoonacular API parameters
@@ -125,13 +126,14 @@ const scpar = {
 
 function Searching() {
   //	TODO- submit again when set filters
+  //	TODO- center search bar with title
+
   // * true if request to api is loading, false otherwise
   const [load, setLoad] = useState(true);
   // * searching query
   const [query, setQuery] = useState(null);
   // * result of searching query
   const [searchResult, setSearchResult] = useState(null);
-  // * true if the user select at least one filter, false otherwise  
   // * (array) cousines selected by the user to be inclused, null if user doesn't select
   const [inCous, setInCous] = useState(null);
   // * (array) cousines selected by the user to be excluded, null if user doesn't select
@@ -148,6 +150,25 @@ function Searching() {
   const [curSort, setCurSort] = useState(null);
   // * sorting direction
   const [sortDir, setSortDir] = useState("asc");
+
+  const SearchingBar = () => {
+    return (
+      <form onSubmit={Sumbit} className="my-3 w-3/4">
+        <input
+          className="border-orange border-b-4 rounded-full h-12 w-10/12 text-center text-2xl font-nunito"
+          type="text"
+          placeholder="Search your recipe..."
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button
+          className="bg-orange hover:bg-[#c07b3f] font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full"
+          type="submit"
+        >
+          Search
+        </button>
+      </form>
+    );
+  };
 
   // # tab with all filter options
   const FilterTab = () => {
@@ -252,6 +273,9 @@ function Searching() {
     // # includes kind of diets in the query
     const OpDiet = () => {
       //	TODO- graphical view
+      //	TODO- fix checked
+      //	TODO- fix that when click a button close the subtab
+
       const handleCheck = (e) => {
         let updateList;
 
@@ -487,7 +511,7 @@ function Searching() {
       setSortDir("asc");
       //! temp
       console.log("filter deleted");
-    }
+    };
 
     return (
       <div className="flex flex-col">
@@ -619,10 +643,9 @@ function Searching() {
             {sortDir}
           </button>
         </div>
-        <button
-        className="border-2"
-        onClick={deleteFilters}
-        >cancel filters</button>
+        <button className="border-2" onClick={deleteFilters}>
+          cancel filters
+        </button>
       </div>
     );
   };
@@ -632,7 +655,31 @@ function Searching() {
     //	TODO- error message (finish free daily request)
     e.preventDefault();
     // encoded query
-    let par = scpar.prefix + "query=" + encodeURIComponent(query);
+    let par = scpar.prefix + "number=100&query=" + encodeURIComponent(query);
+
+    if (inCous) {
+      par = par + "&cousine=" + inCous.join(",");
+    }
+    if (exCous) {
+      par = par + "&excludeCousine=" + exCous.join(",");
+    }
+    if (inDiets) {
+      // here with comma means AND, with pipe (|) means OR
+      par = par + "&diet=" + inDiets.join(",");
+    }
+    if (inIntollerance) {
+      par = par + "&intollerances=" + inIntollerance.join(",");
+    }
+    if (inIngredients) {
+      par = par + "&includeIngredients=" + inIngredients.join(",");
+    }
+    if (exIngredients) {
+      par = par + "&excludeIngredients=" + exIngredients.join(",");
+    }
+    if (curSort) {
+      par = par + "&sort=" + curSort;
+    }
+
     // ! temp
     console.log(par);
 
@@ -654,11 +701,12 @@ function Searching() {
   // # show the results to the user
   const resView = () => {
     //	TODO- nice result view
+    //	TODO- fit results in the page with scroll
     if (load) {
       return <div>Loading...</div>;
     } else {
       return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col h-full items-center overflow-scroll">
           {/* <FilterTab /> */}
           <u>
             {searchResult.number} results of {searchResult.totalResults}
@@ -674,24 +722,59 @@ function Searching() {
   };
 
   return (
-    <div className="flex flex-row justify-between">
-      <FilterTab />
-      <div className="flex flex-col items-center mx-5">
-        <h1>Searching Recipes</h1>
+    <div className="flex flex-row justify-between w-screen h-screen mt-4">
+      {/* filter option side bar */}
+      <div className="w-1/4 border-r-4 border-lightGray">
+        <p className="text-center font-kanit text-darkOrange underline text-[27px]">
+          FILTER OPTIONS
+        </p>
+        <FilterTab />
+      </div>
+      <div className="flex flex-col w-3/4">
+        {/* searching bar space  */}
+        <div className="flex flex-auto flex-col h-1/6 items-center">
+          <p className="text-center font-kanit text-darkOrange underline text-4xl">
+            SEARCHING RECIPES
+          </p>
+          <form onSubmit={Sumbit} className="my-3 w-3/4">
+            <input
+              className="border-orange border-b-4 rounded-full h-12 w-10/12 text-center text-2xl font-nunito"
+              type="text"
+              placeholder="Search your recipe..."
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button
+              className="bg-orange hover:bg-[#c07b3f] font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full"
+              type="submit"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+        {/* results view */}
+        {searchResult ? 
+          <div className="self-center mt-2">
+            {resView()}
+          </div>
+        : <></>}
+      </div>
+
+      <div className="flex flex-col items-center mx-5 justify-self-center">
+        {/* <h1>Searching Recipes</h1> */}
         {/* input form */}
-        <form onSubmit={Sumbit}>
+        {/* <form onSubmit={Sumbit}>
           <input
-            className="border-2"
+            className="border-2 focus:bg-orange"
             type="text"
             placeholder="What recipe do u want?"
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button type="submit" className="border-2">
+          <button type="submit" className="bg-orange hover:bg-[#c07b3f] font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full">
             Search
-          </button>
-          {/* result view */}
-          <div>{searchResult ? resView() : <></>}</div>
-        </form>
+          </button> */}
+        {/* result view */}
+        {/* <div>{searchResult ? resView() : <></>}</div>
+        </form> */}
       </div>
     </div>
   );
