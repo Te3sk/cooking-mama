@@ -6,6 +6,9 @@ import { React, useState, useEffect } from "react";
 import styles from "../styles.json";
 // import filterop from "./filterop";
 
+const cardPrefix = "https://api.spoonacular.com/recipes/";
+const cardSuffix = "/card?apiKey=6eef74cb8a6d4fc8afd1d4010381f7b2";
+
 // # Spoonacular API parameters
 const scpar = {
   // * general prefix of the api get request
@@ -151,28 +154,10 @@ function Searching() {
   // * sorting direction
   const [sortDir, setSortDir] = useState("asc");
 
-  const SearchingBar = () => {
-    return (
-      <form onSubmit={Sumbit} className="my-3 w-3/4">
-        <input
-          className="border-orange border-b-4 rounded-full h-12 w-10/12 text-center text-2xl font-nunito"
-          type="text"
-          placeholder="Search your recipe..."
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <button
-          className="bg-orange hover:bg-[#c07b3f] font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full"
-          type="submit"
-        >
-          Search
-        </button>
-      </form>
-    );
-  };
-
   // # tab with all filter options
   const FilterTab = () => {
     //	TODO- this filter shit
+    //	TODO- number of results sub-tab
     // # COUSINES usestates
     // * if true, show all the cousines selectable
     const [showCousines, setShowCousines] = useState(false);
@@ -655,7 +640,8 @@ function Searching() {
     //	TODO- error message (finish free daily request)
     e.preventDefault();
     // encoded query
-    let par = scpar.prefix + "number=100&query=" + encodeURIComponent(query);
+    //	TODO- decide how many result see in once
+    let par = scpar.prefix + "number=10&query=" + encodeURIComponent(query);
 
     if (inCous) {
       par = par + "&cousine=" + inCous.join(",");
@@ -699,23 +685,87 @@ function Searching() {
   };
 
   // # show the results to the user
-  const resView = () => {
+  const ResView = () => {
     //	TODO- nice result view
     //	TODO- fit results in the page with scroll
+
+    const card = (id) => {
+      let url = cardPrefix + id + cardSuffix;
+      //	TODO- finish this (api limit reached)
+
+      const request = () => {
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            //!temp
+            console.log(data.url);
+            // return data.url;
+          });
+      };
+
+      // console.log(url);
+      return request();
+    };
+
+    const FailureView = () => {
+      return (
+        <div className="text-center w-2/3">
+          <p className="text-center font-kanit text-darkOrange underline text-[27px]">
+            {"Error Code:\t" + searchResult.code}
+          </p>
+          <p className="text-msgSize text-grey mt-4">
+            {searchResult.message}
+          </p>
+        </div>
+      );
+    };
+
     if (load) {
-      return <div>Loading...</div>;
+      return (
+        //	TODO- center loading (maybe center the upper bar)
+        <div className="flex justify-center w-full h-full">
+          <div className="mx-3 border-[3px] border-gray border-r-darkCreambg animate-spin rounded-full h-8 w-8"/>
+          <p className="text-msgSize text-gray">
+          Loading
+          </p>
+        </div>
+      );
     } else {
       return (
-        <div className="flex flex-col h-full items-center overflow-scroll">
-          {/* <FilterTab /> */}
-          <u>
-            {searchResult.number} results of {searchResult.totalResults}
-          </u>
-          <ul>
-            {searchResult.results.map((k) => (
-              <li key={k.id}>{k.title}</li>
-            ))}
-          </ul>
+        <div className="flex flex-col h-screen w-full items-center overflow-scroll">
+          {searchResult.status === "failure" ? (
+            <FailureView />
+          ) : (
+            <div>
+              <u>
+                {searchResult.number} results of {searchResult.totalResults}
+              </u>
+              <div className="grid gap-4 grid-cols-3">
+                {searchResult.results.map((k) => (
+                  <div className="border-2 rounded-md h-40 flex flex-row">
+                    <img
+                      src={k.image}
+                      alt="not aviable"
+                      className="w-40 h-36 self-center rounded-3xl"
+                    />
+                    <div className="flex flex-col mt-5">
+                      <div className="flex flex-row">
+                        <p className="mr-2 font-nunito font-semibold text-orange">
+                          Title:
+                        </p>
+                        {k.title}
+                      </div>
+                      <div>
+                        <p className="mr-2 font-nunito font-semibold text-orange">
+                          Time:
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -733,49 +783,41 @@ function Searching() {
       <div className="flex flex-col w-3/4">
         {/* searching bar space  */}
         <div className="flex flex-auto flex-col h-1/6 items-center">
-          <p className="text-center font-kanit text-darkOrange underline text-4xl">
-            SEARCHING RECIPES
-          </p>
-          <form onSubmit={Sumbit} className="my-3 w-3/4">
+          <form onSubmit={Sumbit} className="my-8 w-3/4 flex flex-row">
             <input
-              className="border-orange border-b-4 rounded-full h-12 w-10/12 text-center text-2xl font-nunito"
+              className="bg-darkCreambg border-orange border-b-4 rounded-full h-12 w-10/12 text-center text-2xl font-nunito"
               type="text"
               placeholder="Search your recipe..."
               onChange={(e) => setQuery(e.target.value)}
             />
             <button
-              className="bg-orange hover:bg-[#c07b3f] font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full"
+              className="bg-orange hover:bg-[#c07b3f] h-12 font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full flex justify-center items-center"
               type="submit"
             >
-              Search
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                fill="currentColor"
+                className="fill-darkCreambg stroke-2"
+                viewBox="0 0 16 16"
+              >
+                {" "}
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />{" "}
+              </svg>
             </button>
           </form>
         </div>
         {/* results view */}
-        {searchResult ? 
-          <div className="self-center mt-2">
-            {resView()}
-          </div>
-        : <></>}
+        <div className="h-5/6">
+          {searchResult ? (
+            <ResView />
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
-
-      <div className="flex flex-col items-center mx-5 justify-self-center">
-        {/* <h1>Searching Recipes</h1> */}
-        {/* input form */}
-        {/* <form onSubmit={Sumbit}>
-          <input
-            className="border-2 focus:bg-orange"
-            type="text"
-            placeholder="What recipe do u want?"
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button type="submit" className="bg-orange hover:bg-[#c07b3f] font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full">
-            Search
-          </button> */}
-        {/* result view */}
-        {/* <div>{searchResult ? resView() : <></>}</div>
-        </form> */}
-      </div>
+      <div className="flex flex-col items-center mx-5 justify-self-center"></div>
     </div>
   );
 }

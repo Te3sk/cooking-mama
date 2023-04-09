@@ -111,7 +111,7 @@ function App() {
 
   // # rendering
   return (
-    <div className="flex flex-col h-screen justify-between items-center">
+    <div className="flex flex-col h-screen justify-between items-center bg-creambg">
       {/* <header className="h-1/6 bg-orange w-full justify-center items-center">
         <div>
           <h1>HEADER2</h1>
