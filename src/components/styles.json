@@ -1,6 +1,8 @@
 {
-    "light": {
+        "filterSubTitle" : "font-nunito text-gray text-lg font-bold",
+        "filterSubHeader" : "flex flex-row justify-between mx-4 border-b-gray border-b-[1px] mt-3",
         "macroHeader": "bg-[#e9aa73] w-full h-28 flex flex-row justify-between",
-        "submitButton" : "border-2 hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full hover:bg-[#e5b386]"
-    }
+        "submitButton" : "border-2 hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full hover:bg-[#e5b386]",
+        "BinButNot" : "rounded-full w-14 h-7 (temp w) hover:bg-orange hover:opacity-75 font-bold text-sm",
+        "BinButSel" : "rounded-full w-14 h-7 (temp w) bg-orange hover:opacity-75 font-bold text-sm"
 }

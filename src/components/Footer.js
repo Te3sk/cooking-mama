@@ -2,7 +2,7 @@ import React from 'react'
 
 function Footer() {
   return (
-    <div className="bg-[#e9aa73] w-full h-28 flex flex-row justify-between inset-x-0">
+    <div className="bg-orange w-full h-1/6 flex flex-row justify-center inset-x-0 items-center">
       FOOTER
     </div>
   )

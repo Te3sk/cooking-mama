@@ -23,8 +23,8 @@ function Header({ theme }) {
   };
 
   return (
-    <div className="w-full">
-    <header className="bg-[#e9aa73] w-full h-28 flex flex-row justify-between">
+    <div className="w-full h-1/6 bg-orange flex justify-center items-center">
+    <header className="w-full h- flex flex-row justify-between">
       <div className="self-center flex flex-row">
         {/* menù button */}
         <button onClick={showSidebar} className = "ml-5 mr-7">

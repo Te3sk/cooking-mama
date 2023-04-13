@@ -119,6 +119,7 @@ function App() {
         </div>
       </header> */}
       <Header theme={theme} />
+      <div className="h-4/5 w-full">
       <Routes>
         <Route path='/' element={<HomePage />}/>
         <Route path='/log-in' element={<SignIn />}/>
@@ -127,6 +128,7 @@ function App() {
         <Route path='/random' element={<RandomRecipes />}/>
         <Route path='/userspace' element={<AuthDetails />}/>
       </Routes>
+      </div>
       <Footer />
     </div>
   );

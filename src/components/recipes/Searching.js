@@ -160,26 +160,26 @@ function Searching() {
     //	TODO- number of results sub-tab
     // # COUSINES usestates
     // * if true, show all the cousines selectable
-    const [showCousines, setShowCousines] = useState(false);
+    const [showCousines, setShowCousines] = useState(true);
     // # DIET usestates
     // * if true, show all the diets selectable
-    const [showDiet, setShowDiet] = useState(false);
+    const [showDiet, setShowDiet] = useState(true);
     // # INTOLLERANCE usestates
     // * if true, show all the intollerance selectable
-    const [showIntollerance, setShowIntollerance] = useState(false);
+    const [showIntollerance, setShowIntollerance] = useState(true);
     // # INGREDIENTS usestates
     // * if true, show all the ingredients selectable
-    const [showIngredients, setShowIngredients] = useState(false);
+    const [showIngredients, setShowIngredients] = useState(true);
     // * (string) single ingredients write by the user (last)
     const [singIng, setSingIng] = useState(null);
     // * (array) list of all the ingredients wrote by the user
     const [ingList, setIngList] = useState(null);
     // # SORT OPTION usestates
     // * if true, show all sorting option selectable
-    const [showSort, setShowSort] = useState(false);
+    const [showSort, setShowSort] = useState(true);
 
     // # includes and excludes cousines from the query
-    const opCousine = () => {
+    const OpCousine = () => {
       //	TODO- graphical view
       //	TODO- mutual exclusion between include and exclude (if click "exclude" of an include element, remove it from included list)
       //	TODO- fix that when click a button close the subtab
@@ -190,7 +190,9 @@ function Searching() {
         e.preventDefault();
         if (inCous == null || inCous === []) {
           // console.log("inCous empty");
-          setInCous([x]);
+          let temp = [x];
+          console.log(temp);
+          setInCous(temp);
         } else {
           // console.log(inCous);
           let temp = inCous.indexOf(x);
@@ -202,7 +204,7 @@ function Searching() {
             setInCous([...inCous, x]);
           }
         }
-        // console.log(inCous);
+        console.log(inCous);
       };
 
       const handleEx = (e, x) => {
@@ -227,24 +229,42 @@ function Searching() {
       };
 
       return (
-        <div>
+        <div className="columns-2">
           <ul>
             {scpar.listOfCousine.map((x, index) => {
               return (
-                <li key={index} className="flex flex-row justify-between">
-                  <p className="ml-2">{x}</p>
+                <li
+                  key={index}
+                  className="flex flex-row justify-between my-2 border-b-[1px] border-b-lightGray"
+                >
+                  <p className="-2">{x}</p>
                   <div className="flex flex-row">
                     <button
-                      className="border-2"
+                      // className={inCous ? (inCous.include(x) ? styles.BinButSel : styles.BinButNot) : styles.BinButNot}
+                      className={
+                        inCous
+                          ? inCous.indexOf(x) >= 0
+                            ? (styles.BinButSel + "mx-3")
+                            : (styles.BinButNot + "mx-3")
+                          : (styles.BinButNot + "mx-3")
+                      }
+                      // className="border-2"
                       onClick={(e) => handleIn(e, x)}
+                      // onClick={(e) => console.log(x + " -------- type: " + typeof x)}
                     >
-                      include
+                      IN
                     </button>
                     <button
-                      className="border-2"
+                      className={
+                        exCous
+                          ? exCous.indexOf(x) >= 0
+                            ? (styles.BinButSel + "mx-3")
+                            : (styles.BinButNot + "mx-3")
+                          : (styles.BinButNot + "mx-3")
+                      }
                       onClick={(e) => handleEx(e, x)}
                     >
-                      exclude
+                      EX
                     </button>
                   </div>
                 </li>
@@ -498,126 +518,192 @@ function Searching() {
       console.log("filter deleted");
     };
 
-    return (
-      <div className="flex flex-col">
-        {/* show cousines button */}
-        <button
-          className="border-2"
-          onClick={(e) => {
-            setShowCousines(!showCousines);
-            if (showCousines === true) {
-              setInCous(null);
-              setExCous(null);
-            }
-          }}
+    const Ddicon = () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
         >
-          {showCousines ? "close and cancell" : "Include / exclude Cousine"}
-        </button>
-        {/* cousines filter tab */}
-        {showCousines ? (
-          <>
-            {opCousine()}
+          <g
+            id="feDropDown0"
+            fill="none"
+            fill-rule="evenodd"
+            stroke="none"
+            stroke-width="1"
+          >
+            <g id="feDropDown1" fill="#7c7c7c">
+              <path id="feDropDown2" d="m5 8l7 8l7-8z" />
+            </g>
+          </g>
+        </svg>
+      );
+    };
+
+    const Dupicon = () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <g
+            id="feDropUp0"
+            fill="none"
+            fill-rule="evenodd"
+            stroke="none"
+            stroke-width="1"
+          >
+            <g id="feDropUp1" fill="#7c7c7c">
+              <path id="feDropUp2" d="m12 8l7 8H5z" />
+            </g>
+          </g>
+        </svg>
+      );
+    };
+
+    return (
+      <div className="flex flex-col h-full mx-3 overflow-scroll">
+        {/* show cousines button */}
+        <div className="w-full flex flex-col">
+          <div className={styles.filterSubHeader}>
+            <p className={styles.filterSubTitle}>
+              {/* {showCousines ? "close and cancell" : "Include / exclude Cousines"} */}
+              Include / exclude Cousines
+            </p>
             <button
-              className="border-2"
+              className=""
               onClick={(e) => {
-                setShowCousines(false);
+                setShowCousines(!showCousines);
+                if (showCousines === true) {
+                  setInCous(null);
+                  setExCous(null);
+                }
               }}
             >
-              save
+              {/* {showCousines ? "close and cancell" : "Include / exclude Cousine"} */}
+              {showCousines ? <Dupicon /> : <Ddicon />}
             </button>
-          </>
-        ) : (
-          <></>
-        )}
+          </div>
+          {/* cousines filter tab */}
+          {showCousines ? <OpCousine /> : <></>}
+        </div>
         {/* show diet botton */}
-        <button
-          className="border-2"
-          onClick={(e) => {
-            setShowDiet(!showDiet);
-            if (showDiet) {
-              setInDiets(null);
-            }
-          }}
-        >
-          {showDiet ? "close and cancell" : "include Diets"}
-        </button>
-        {/* diet filter tab */}
-        {showDiet ? (
-          <>
-            {OpDiet()}
-            <button className="border-2" onClick={(e) => setShowDiet(false)}>
-              save
+        <div className="w-full flex flex-col">
+          <div className={styles.filterSubHeader}>
+            <p className={styles.filterSubTitle}>Include Diets</p>
+            <button
+              onClick={(e) => {
+                setShowDiet(!showDiet);
+                if (showDiet) {
+                  setInDiets(null);
+                }
+              }}
+            >
+              {showDiet ? <Dupicon /> : <Ddicon />}
             </button>
-          </>
-        ) : (
-          <></>
-        )}
+          </div>
+          {/* diet filter tab */}
+          {showDiet ? (
+            <>
+              <OpDiet />
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
         {/* show intollerances button */}
-        <button
-          className="border-2"
-          onClick={(e) => {
-            setShowIntollerance(!showIntollerance);
-            if (showIntollerance) {
-              setInIntollerance(null);
-            }
-          }}
-        >
-          {showIntollerance ? "close and cancell" : "Intollerance"}
-        </button>
-        {/* intollerance filter tab */}
-        {showIntollerance ? (
-          <>
-            {OpIntollerance()}
+        <div className="w-full flex flex-col">
+          <div className={styles.filterSubHeader}>
+            <p className={styles.filterSubTitle}>Select Intollerances</p>
             <button
-              className="border-2"
-              onClick={(e) => setShowIntollerance(false)}
+              onClick={(e) => {
+                setShowIntollerance(!showIntollerance);
+                if (showIntollerance) {
+                  setInIntollerance(null);
+                }
+              }}
             >
-              save
+              {showIntollerance ? <Dupicon /> : <Ddicon />}
             </button>
-          </>
-        ) : (
-          <></>
-        )}
+          </div>
+          {/* intollerance filter tab */}
+          {showIntollerance ? (
+            <>
+              <OpIntollerance />
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
         {/* show ingredients button */}
-        <button
-          className="border-2"
-          onClick={(e) => {
-            setShowIngredients(!showIngredients);
-            if (showIngredients) {
-              setInIngredients(null);
-              setExIngredients(null);
-              setIngList(null);
-              setSingIng(null);
-            }
-          }}
-        >
-          {showIngredients
-            ? "close and cancel"
-            : "Include / exclude ingredients"}
-        </button>
-        {/* include and exclude ingredients filter tab */}
-        {showIngredients ? (
-          <>
-            {OpIngredients()}
+        <div className="w-full flex flex-col">
+          <div className={styles.filterSubHeader}>
+            <p className={styles.filterSubTitle}>
+              Include / exclude Ingredients
+            </p>
             <button
-              className="border-2"
-              onClick={(e) => setShowIngredients(false)}
+              onClick={(e) => {
+                setShowIngredients(!showIngredients);
+                if (showIngredients) {
+                  setInIngredients(null);
+                  setExIngredients(null);
+                  setIngList(null);
+                  setSingIng(null);
+                }
+              }}
             >
-              save
+              {showIngredients ? <Dupicon /> : <Ddicon />}
             </button>
-          </>
-        ) : (
-          <></>
-        )}
+          </div>
+          {/* include and exclude ingredients filter tab */}
+          {showIngredients ? (
+            <>
+              <OpIngredients />
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
         {/* sorting element */}
-        <button className="border-2" onClick={(e) => setShowSort(!showSort)}>
-          {showSort
-            ? "close and cancell"
-            : "Sort element by " + (curSort ? curSort : "")}
-        </button>
-        {/* sorting option filter tab */}
-        {showSort ? <>{OpSorting()}</> : <></>}
-        <div className="border-2 flex flex-col place-self-center">
+        <div className="w-full flex flex-col">
+          <div className={styles.filterSubHeader}>
+            <p className={styles.filterSubTitle}>
+              Sort element by {curSort ? curSort : ""}
+            </p>
+            <button onClick={(e) => setShowSort(!showSort)}>
+              {showSort ? <Dupicon /> : <Ddicon />}
+            </button>
+          </div>
+          {/* sorting option filter tab */}
+          {showSort ? <OpSorting /> : <></>}
+        </div>
+        <div className="w-full flex flex-col">
+          <div className={styles.filterSubHeader}>
+            <p className={styles.filterSubTitle}>Sort direction</p>
+            <div>
+              <button
+                className={
+                  sortDir === "asc" ? styles.BinButSel : styles.BinButNot
+                }
+                onClick={(e) => setSortDir("asc")}
+              >
+                ASC
+              </button>
+              <button
+                className={
+                  sortDir === "desc" ? styles.BinButSel : styles.BinButNot
+                }
+                onClick={(e) => setSortDir("desc")}
+              >
+                DESC
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* <div className="border-2 flex flex-col place-self-center">
           Sort direction
           <button
             className="border-2"
@@ -627,7 +713,7 @@ function Searching() {
           >
             {sortDir}
           </button>
-        </div>
+        </div> */}
         <button className="border-2" onClick={deleteFilters}>
           cancel filters
         </button>
@@ -713,24 +799,22 @@ function Searching() {
           <p className="text-center font-kanit text-darkOrange underline text-[27px]">
             {"Error Code:\t" + searchResult.code}
           </p>
-          <p className="text-msgSize text-grey mt-4">
-            {searchResult.message}
-          </p>
+          <p className="text-msgSize text-grey mt-4">{searchResult.message}</p>
         </div>
       );
     };
 
     if (load) {
+      // # loading page
       return (
         //	TODO- center loading (maybe center the upper bar)
         <div className="flex justify-center w-full h-full">
-          <div className="mx-3 border-[3px] border-gray border-r-darkCreambg animate-spin rounded-full h-8 w-8"/>
-          <p className="text-msgSize text-gray">
-          Loading
-          </p>
+          <div className="mx-3 border-[3px] border-gray border-r-darkCreambg animate-spin rounded-full h-8 w-8" />
+          <p className="text-msgSize text-gray">Loading</p>
         </div>
       );
     } else {
+      // # result page
       return (
         <div className="flex flex-col h-screen w-full items-center overflow-scroll">
           {searchResult.status === "failure" ? (
@@ -772,9 +856,9 @@ function Searching() {
   };
 
   return (
-    <div className="flex flex-row justify-between w-screen h-screen mt-4">
+    <div className="flex flex-row justify-between w-full h-full mt-4">
       {/* filter option side bar */}
-      <div className="w-1/4 border-r-4 border-lightGray">
+      <div className="w-1/3 border-r-4 border-lightGray h-full">
         <p className="text-center font-kanit text-darkOrange underline text-[27px]">
           FILTER OPTIONS
         </p>
@@ -809,13 +893,7 @@ function Searching() {
           </form>
         </div>
         {/* results view */}
-        <div className="h-5/6">
-          {searchResult ? (
-            <ResView />
-          ) : (
-            <></>
-          )}
-        </div>
+        <div className="h-5/6">{searchResult ? <ResView /> : <></>}</div>
       </div>
       <div className="flex flex-col items-center mx-5 justify-self-center"></div>
     </div>

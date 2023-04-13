@@ -3,13 +3,13 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+    fontSize : {
+      msgSize : "20px"
+    },
     },
     fontFamily:{
       nunito : ["Nunito", "sans-serif"],
       kanit : ["Kanit","sans-serif"]
-    },
-    fontSize : {
-      msgSize : "20px"
     },
     colors: {
       white: "#ffffff",
