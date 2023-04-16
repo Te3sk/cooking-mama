@@ -160,13 +160,13 @@ function Searching() {
     //	TODO- number of results sub-tab
     // # COUSINES usestates
     // * if true, show all the cousines selectable
-    const [showCousines, setShowCousines] = useState(true);
+    const [showCousines, setShowCousines] = useState(false); //	TODO- CHANGE IN TRUE
     // # DIET usestates
     // * if true, show all the diets selectable
-    const [showDiet, setShowDiet] = useState(true);
+    const [showDiet, setShowDiet] = useState(false); //	TODO- CHANGE IN TRUE
     // # INTOLLERANCE usestates
     // * if true, show all the intollerance selectable
-    const [showIntollerance, setShowIntollerance] = useState(true);
+    const [showIntollerance, setShowIntollerance] = useState(true); //	TODO- CHANGE IN TRUE
     // # INGREDIENTS usestates
     // * if true, show all the ingredients selectable
     const [showIngredients, setShowIngredients] = useState(true);
@@ -180,55 +180,65 @@ function Searching() {
 
     // # includes and excludes cousines from the query
     const OpCousine = () => {
-      //	TODO- graphical view
-      //	TODO- mutual exclusion between include and exclude (if click "exclude" of an include element, remove it from included list)
-      //	TODO- fix that when click a button close the subtab
+      //	TODO- when click a selected button, doesn't deselect it
+      //	TODO- reset button
+      //	TODO- columns at different height
+      //	TODO- allign the two button in the center vertically in the rows with 2 lines
 
+      // * handle inclusion button click
       const handleIn = (e, x) => {
-        //	TODO- clean code
-        // console.log(Array.isArray(inCous));
         e.preventDefault();
         if (inCous == null || inCous === []) {
-          // console.log("inCous empty");
+          // if inCous isn't initalized or is empty set the array with 1 item
           let temp = [x];
           console.log(temp);
           setInCous(temp);
         } else {
-          // console.log(inCous);
           let temp = inCous.indexOf(x);
           if (temp >= 0) {
-            // console.log(x + " deleted from inCous in position" + temp);
+            // else if the element is already in the array, remove it
             inCous.splice(temp, 1);
           } else {
-            // console.log(x + " added in inCous 'cause indexOf(x) = " + temp);
-            setInCous([...inCous, x]);
+            // else check if the item is in the other array and if so remove the item from it
+            if (!(exCous == null && exCous === [])) {
+              let temp = exCous.indexOf(x);
+              if (temp >= 0) {
+                exCous.splice(temp, 1);
+              }
+              // then push it
+              setInCous([...inCous, x]);
+            }
           }
         }
-        console.log(inCous);
-      };
+      }
 
+      // * handle exclusion button click
       const handleEx = (e, x) => {
-        //	TODO- clean code
         e.preventDefault();
         if (exCous == null || exCous === []) {
-          console.log("exCous empty");
+          // if inCous isn't initalized or is empty set the array with 1 item
           setExCous([x]);
         } else {
-          // console.log(exCous);
           let temp = exCous.indexOf(x);
           if (temp >= 0) {
-            // console.log(x + " deleted from exCous in position" + temp);
-            // def(x);
+            // else if the element is already in the array, remove it
             exCous.splice(temp, 1);
           } else {
-            // console.log(x + " added in exCous 'cause indexOf(x) = " + temp);
+            // else check if the item is in the other array and if so remove the item from it
+            if (!(inCous == null && inCous === [])) {
+              let temp = inCous.indexOf(x);
+              if (temp >= 0) {
+                inCous.splice(temp, 1);
+              }
+            }
+            // then push it
             setExCous([...exCous, x]);
           }
         }
-        // console.log(exCous);
       };
 
       return (
+        //	TODO- clean code
         <div className="columns-2">
           <ul>
             {scpar.listOfCousine.map((x, index) => {
@@ -238,15 +248,18 @@ function Searching() {
                   className="flex flex-row justify-between my-2 border-b-[1px] border-b-lightGray"
                 >
                   <p className="-2">{x}</p>
-                  <div className="flex flex-row">
+                  <div className="flex flex-row w-16 justify-between">
                     <button
                       // className={inCous ? (inCous.include(x) ? styles.BinButSel : styles.BinButNot) : styles.BinButNot}
                       className={
                         inCous
                           ? inCous.indexOf(x) >= 0
-                            ? (styles.BinButSel + "mx-3")
-                            : (styles.BinButNot + "mx-3")
-                          : (styles.BinButNot + "mx-3")
+                            ? styles.BinButSel
+                            : // ? ("rounded-full w-14 h-7 (temp w) bg-orange hover:opacity-75 font-bold text-sm")
+                              styles.BinButNot
+                          : // : ("rounded-full w-14 h-7 (temp w) hover:bg-orange hover:opacity-75 font-bold text-sm")
+                            styles.BinButNot
+                        // : ("rounded-full w-14 h-7 (temp w) hover:bg-orange hover:opacity-75 font-bold text-sm")
                       }
                       // className="border-2"
                       onClick={(e) => handleIn(e, x)}
@@ -258,9 +271,12 @@ function Searching() {
                       className={
                         exCous
                           ? exCous.indexOf(x) >= 0
-                            ? (styles.BinButSel + "mx-3")
-                            : (styles.BinButNot + "mx-3")
-                          : (styles.BinButNot + "mx-3")
+                            ? styles.BinButSel
+                            : // ? ("rounded-full w-14 h-7 (temp w) bg-orange hover:opacity-75 font-bold text-sm")
+                              styles.BinButNot
+                          : // : ("rounded-full w-14 h-7 (temp w) hover:bg-orange hover:opacity-75 font-bold text-sm")
+                            styles.BinButNot
+                        // : ("rounded-full w-14 h-7 (temp w) hover:bg-orange hover:opacity-75 font-bold text-sm")
                       }
                       onClick={(e) => handleEx(e, x)}
                     >
@@ -277,35 +293,45 @@ function Searching() {
 
     // # includes kind of diets in the query
     const OpDiet = () => {
-      //	TODO- graphical view
-      //	TODO- fix checked
-      //	TODO- fix that when click a button close the subtab
+      //	TODO- insert checked checkbox svg (link above)
 
-      const handleCheck = (e) => {
+      const selected = (x) => {
+        return (inDiets == null || inDiets === [])
+        ? false
+        : (inDiets.indexOf(x) >= 0)
+          ? true
+          : false
+      }
+
+      const handleCheck = (e, x) => {
         let updateList;
 
         if (inDiets) {
           updateList = [...inDiets];
-          if (e.target.checked) {
-            updateList = [...inDiets, e.target.value];
+          if (!selected(x)) {
+            updateList = [...inDiets, x];
           } else {
-            updateList.splice(inDiets.indexOf(e.target.value), 1);
+            updateList.splice(inDiets.indexOf(x), 1);
           }
         } else {
-          updateList = [e.target.value];
+          updateList = [x];
         }
 
         setInDiets(updateList);
       };
 
       return (
-        <div>
+        <div className="columns-2">
           <ul>
             {scpar.listOfDiet.map((x, index) => {
               return (
-                <li key={index} className="flex flex-row justify-start">
-                  <input type="checkbox" value={x} onChange={handleCheck} />
-                  <p>{x}</p>
+                <li key={index} className="flex flex-row my-2" onClick={(e) => {handleCheck(e,x)}}>
+                  {/* link for the selected one to download
+                  https://iconscout.com/icon/checkbox-2666234 */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" id="check-box"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z"></path></svg>
+                  <p className={selected(x) ? styles.chbxTextSel : styles.chbxTextNot}>
+                    {x}
+                  </p>
                 </li>
               );
             })}
@@ -316,32 +342,44 @@ function Searching() {
 
     // # include kind of intollerances in the query
     const OpIntollerance = () => {
-      //	TODO- graphical view
-      const handleCheck = (e) => {
+      
+      const selected = (x) => {
+        return (inIntollerance == null || inIntollerance === [])
+        ? false
+        : (inIntollerance.indexOf(x) >= 0)
+          ? true
+          : false
+      }
+
+      const handleCheck = (e, x) => {
         let updateList;
 
         if (inIntollerance) {
           updateList = [...inIntollerance];
-          if (e.target.checked) {
-            updateList = [...inIntollerance, e.target.value];
+          if (!selected(x)) {
+            updateList = [...inIntollerance, x];
           } else {
-            updateList.splice(inIntollerance.indexOf(e.target.value), 1);
+            updateList.splice(inIntollerance.indexOf(x), 1);
           }
         } else {
-          updateList = [e.target.value];
+          updateList = [x];
         }
 
         setInIntollerance(updateList);
       };
 
       return (
-        <div>
+        <div className="columns-2">
           <ul>
             {scpar.listOfIntollerance.map((x, index) => {
               return (
-                <li key={index} className="flex flex-row justify-start">
-                  <input type="checkbox" value={x} onChange={handleCheck} />
-                  <p>{x}</p>
+                <li key={index} className="flex flex-row justify-start" onClick={(e) => {handleCheck(e,x)}}>
+                  {/* link for the selected one to download
+                  https://iconscout.com/icon/checkbox-2666234 */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" id="check-box"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z"></path></svg>
+                  <p className={selected(x) ? styles.chbxTextSel : styles.chbxTextNot}>
+                    {x}
+                  </p>
                 </li>
               );
             })}
@@ -353,6 +391,7 @@ function Searching() {
     // # includes and excludes ingredients from the query
     const OpIngredients = () => {
       //	TODO- graphical view
+      //	TODO- can't type in input field
 
       // * input submit: add the element wrote by the user in the list of element (ingList)
       const insub = (e) => {
@@ -431,13 +470,15 @@ function Searching() {
 
       return (
         <div>
-          <form onSubmit={insub}>
+          <form onSubmit={insub} className="flex flex-row my-4">
             <input
+              id="ingrInput"
               type="text"
-              className="border-2"
-              onChange={(e) => setSingIng(e.target.value)}
-            />
-            <button className="border-2" type="submit">
+              className={styles.searchBar + " w-3/4"}
+              placeholder="Write your ingredients ..."
+              onChange={(e) => {setSingIng(e.target.value)}}
+                />
+            <button className={styles.searchBut + " w-1/4"} type="submit">
               submit
             </button>
           </form>
@@ -529,9 +570,9 @@ function Searching() {
           <g
             id="feDropDown0"
             fill="none"
-            fill-rule="evenodd"
+            fillRule="evenodd"
             stroke="none"
-            stroke-width="1"
+            strokeWidth="1"
           >
             <g id="feDropDown1" fill="#7c7c7c">
               <path id="feDropDown2" d="m5 8l7 8l7-8z" />
@@ -552,9 +593,9 @@ function Searching() {
           <g
             id="feDropUp0"
             fill="none"
-            fill-rule="evenodd"
+            fillRule="evenodd"
             stroke="none"
-            stroke-width="1"
+            strokeWidth="1"
           >
             <g id="feDropUp1" fill="#7c7c7c">
               <path id="feDropUp2" d="m12 8l7 8H5z" />
@@ -565,10 +606,19 @@ function Searching() {
     };
 
     return (
-      <div className="flex flex-col h-full mx-3 overflow-scroll">
+      <div className="flex flex-col h-full mx-5 overflow-scroll">
         {/* show cousines button */}
         <div className="w-full flex flex-col">
-          <div className={styles.filterSubHeader}>
+          <div
+            className={styles.filterSubHeader}
+            onClick={(e) => {
+              setShowCousines(!showCousines);
+              if (showCousines === true) {
+                setInCous(null);
+                setExCous(null);
+              }
+            }}
+          >
             <p className={styles.filterSubTitle}>
               {/* {showCousines ? "close and cancell" : "Include / exclude Cousines"} */}
               Include / exclude Cousines
@@ -592,7 +642,15 @@ function Searching() {
         </div>
         {/* show diet botton */}
         <div className="w-full flex flex-col">
-          <div className={styles.filterSubHeader}>
+          <div
+            className={styles.filterSubHeader}
+            onClick={(e) => {
+              setShowDiet(!showDiet);
+              if (showDiet) {
+                setInDiets(null);
+              }
+            }}
+          >
             <p className={styles.filterSubTitle}>Include Diets</p>
             <button
               onClick={(e) => {
@@ -680,6 +738,7 @@ function Searching() {
           {/* sorting option filter tab */}
           {showSort ? <OpSorting /> : <></>}
         </div>
+        {/* sort direction */}
         <div className="w-full flex flex-col">
           <div className={styles.filterSubHeader}>
             <p className={styles.filterSubTitle}>Sort direction</p>
@@ -703,17 +762,7 @@ function Searching() {
             </div>
           </div>
         </div>
-        {/* <div className="border-2 flex flex-col place-self-center">
-          Sort direction
-          <button
-            className="border-2"
-            onClick={(e) => {
-              sortDir === "asc" ? setSortDir("desc") : setSortDir("asc");
-            }}
-          >
-            {sortDir}
-          </button>
-        </div> */}
+        {/* delete filters */}
         <button className="border-2" onClick={deleteFilters}>
           cancel filters
         </button>
@@ -869,13 +918,13 @@ function Searching() {
         <div className="flex flex-auto flex-col h-1/6 items-center">
           <form onSubmit={Sumbit} className="my-8 w-3/4 flex flex-row">
             <input
-              className="bg-darkCreambg border-orange border-b-4 rounded-full h-12 w-10/12 text-center text-2xl font-nunito"
+              className={styles.searchBar + " w-10/12 h-12 text-2xl"}
               type="text"
               placeholder="Search your recipe..."
               onChange={(e) => setQuery(e.target.value)}
             />
             <button
-              className="bg-orange hover:bg-[#c07b3f] h-12 font-bold hover:border-[#ffffff] hover:text-[#ffffff] mx-2 w-24 rounded-full flex justify-center items-center"
+              className={styles.searchBut + " h-12 w-24"}
               type="submit"
             >
               <svg
